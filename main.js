@@ -17,19 +17,29 @@ await createUsers(numberOfUsersToCreate)
 
 const users = []
 const promises = []
-const randomId = usersIds[getRandomIndex(usersIds)]
+const randomIds = [
+  usersIds[getRandomIndex(usersIds)],
+  usersIds[getRandomIndex(usersIds)],
+  usersIds[getRandomIndex(usersIds)]
+]
 
-for (let i = 0; i < numberOfRequests; i++) {
-  const promise = getUser(randomId)
-    .then(user => {
-      users.push(user)
-    })
-    .catch(err => console.log('Something went wrong: ', err))
+randomIds.forEach((randomId) => {
+  for (let i = 0; i < numberOfRequests; i++) {
+    const promise = getUser(randomId)
+      .then(user => {
+        users.push(user)
+      })
+      .catch(err => console.log('Something went wrong: ', err))
 
-  promises.push(promise)
-}
+    promises.push(promise)
+  }
+})
 
 await Promise.all(promises)
 console.log('='.repeat(25) + '\n')
-console.log(`Get user by id ${ randomId }`)
+
+randomIds.forEach((randomId) => {
+  console.log(`Get users by id ${ randomId }`)
+})
+
 console.table(users)

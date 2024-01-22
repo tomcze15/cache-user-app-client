@@ -1,41 +1,44 @@
-import axios from "axios";
-import { faker } from "@faker-js/faker";
+import axios from 'axios'
+import { faker } from '@faker-js/faker'
 
-export function createUsers(numberOfUsers) {
-    sendRequests(numberOfUsers)
-    .then(() => console.log('All requests have been processed'))
-    .then(() => console.error(`Something went wrong during creating users`))
+const baseUrl = 'http://localhost:8080/users/'
+
+export async function createUsers (numberOfUsers) {
+  return sendRequests(numberOfUsers)
 }
 
-async function sendRequests(numberOfRequests) {
-    const promises = [];
+async function sendRequests (numberOfRequests) {
+  const promises = []
 
-    for (let i = 0; i < numberOfRequests; i++) {
-        const name = generateRandomName();
-        const surname = generateRandomSurname();
+  for (let i = 0; i < numberOfRequests; i++) {
+    const name = generateRandomName()
+    const surname = generateRandomSurname()
 
-        const promise = axios.post('http://localhost:8080/users/',{
-            name: name,
-            surname: surname
-        }).then((response) => {
-            console.log('Response for request', i, ':', response.status);
-        }).catch(() => console.error('Error in request', i))
+    const promise = axios.post(baseUrl, {
+      name,
+      surname
+    })
 
-        promises.push(promise);
-    }
+    promises.push(promise)
+  }
 
-    await Promise.all(promises);
+  return await Promise.all(promises)
 }
 
-function generateRandomName() {
-    return faker.person.firstName()
+function generateRandomName () {
+  return faker.person.firstName()
 }
 
-function  generateRandomSurname() {
-    return faker.person.lastName()
+function generateRandomSurname () {
+  return faker.person.lastName()
 }
 
-export async function getUser(id) {
-    return axios.get(`http://localhost:8080/users/${id}`)
-        .then(response => response.data)
+export async function getUser (id) {
+  return axios.get(`${ baseUrl }${ id }`)
+    .then(response => response.data)
+}
+
+export async function getUsers () {
+  return axios.get(baseUrl)
+    .then(response => response.data)
 }
